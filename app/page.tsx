@@ -1,113 +1,318 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ChevronDownIcon, Download, ImageIcon, Loader2, Moon, Sun } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import Image from 'next/image';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+
+const formSchema = z.object({
+  prompt: z.string().min(1, 'Prompt is required'),
+  aspectRatio: z.string().optional(),
+  negativePrompt: z.string().optional(),
+  seed: z.string().optional(),
+  stylePreset: z.string().optional(),
+  outputFormat: z.enum(['webp', 'png', 'jpg']),
+});
+
+export default function Component() {
+  const [imageUrl, setImageUrl] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const { theme, setTheme } = useTheme();
+  const [showMoreOptions, setShowMoreOptions] = useState(false);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      prompt: '',
+      aspectRatio: '',
+      negativePrompt: '',
+      seed: '',
+      stylePreset: '',
+      outputFormat: 'webp',
+    },
+  });
+
+  const generateImage = async (values: z.infer<typeof formSchema>) => {
+    setLoading(true);
+    setError('');
+    setImageUrl('');
+
+    try {
+      const response = await fetch('/api/generate-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...values,
+          seed: values.seed ? parseInt(values.seed) : undefined,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'An error occurred while generating the image.');
+      }
+
+      setImageUrl(data.imageUrl);
+    } catch (err: unknown) {
+      console.error(err);
+      setError(
+        err instanceof Error ? err.message : 'An error occurred while generating the image.'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    form.handleSubmit(generateImage)(event);
+  };
+
+  const handleDownload = () => {
+    if (imageUrl) {
+      const link = document.createElement('a');
+      link.href = imageUrl;
+      link.download = 'generated-image.' + form.getValues('outputFormat');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <div className='container mx-auto p-4'>
+      <div className='flex flex-col md:flex-row gap-8'>
+        <Card className='w-full md:w-1/2'>
+          <CardHeader>
+            <div className='flex justify-between items-center'>
+              <CardTitle>AI Image Generator</CardTitle>
+              <Button
+                variant='ghost'
+                size='icon'
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+                {theme === 'dark' ? (
+                  <Sun className='h-[1.2rem] w-[1.2rem]' />
+                ) : (
+                  <Moon className='h-[1.2rem] w-[1.2rem]' />
+                )}
+                <span className='sr-only'>Toggle theme</span>
+              </Button>
+            </div>
+            <CardDescription>
+              Enter a prompt and optional parameters to generate an AI image
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form
+                onSubmit={onSubmit}
+                className='space-y-4'>
+                <FormField
+                  control={form.control}
+                  name='prompt'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Image Prompt</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='Enter your image prompt here...'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Collapsible
+                  open={showMoreOptions}
+                  onOpenChange={setShowMoreOptions}
+                  className='mt-4'>
+                  <CollapsibleTrigger asChild>
+                    <div className='flex items-center justify-between cursor-pointer'>
+                      <span className='text-sm text-gray-400'>Additional Settings</span>
+                      <Button
+                        variant='ghost'
+                        size='sm'
+                        className='p-0'
+                        type='button' // Prevent form submission
+                      >
+                        <span className='sr-only'>Toggle</span>
+                        <ChevronDownIcon className='h-4 w-4 text-gray-400' />
+                      </Button>
+                    </div>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className='mt-2 space-y-4'>
+                    <FormField
+                      control={form.control}
+                      name='aspectRatio'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Aspect Ratio</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder='e.g., 1:1, 16:9, 4:3'
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name='negativePrompt'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Negative Prompt</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder='Enter negative prompt here...'
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name='seed'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Seed</FormLabel>
+                          <FormControl>
+                            <Input
+                              type='number'
+                              placeholder='Enter seed (optional)'
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name='stylePreset'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Style Preset</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder='Enter style preset (optional)'
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CollapsibleContent>
+                </Collapsible>
+
+                <FormField
+                  control={form.control}
+                  name='outputFormat'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Output Format</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder='Select output format' />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value='webp'>WebP</SelectItem>
+                          <SelectItem value='png'>PNG</SelectItem>
+                          <SelectItem value='jpg'>JPG</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Button
+                  type='submit'
+                  disabled={loading}
+                  className='w-full'>
+                  {loading ? (
+                    <>
+                      <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <ImageIcon className='mr-2 h-4 w-4' />
+                      Generate Image
+                    </>
+                  )}
+                </Button>
+              </form>
+            </Form>
+            {error && <p className='text-sm text-red-500 mt-2'>{error}</p>}
+          </CardContent>
+        </Card>
+
+        <Card className='w-full md:w-1/2'>
+          <CardHeader>
+            <div className='flex justify-between items-center'>
+              <CardTitle>Generated Image</CardTitle>
+              {imageUrl && (
+                <Button
+                  onClick={handleDownload}
+                  className='flex items-center'>
+                  <Download className='mr-2 h-4 w-4' />
+                  Download
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            {imageUrl ? (
+              <Image
+                src={imageUrl}
+                alt='Generated AI Image'
+                width={500}
+                height={300}
+                className='w-full h-auto rounded-lg shadow-lg'
+              />
+            ) : (
+              <div className='flex items-center justify-center h-64 bg-gray-100 dark:bg-gray-800 rounded-lg'>
+                <p className='text-gray-500 dark:text-gray-400'>Image will appear here</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </div>
   );
 }
