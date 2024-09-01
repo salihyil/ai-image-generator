@@ -19,8 +19,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ChevronDownIcon, Download, ImageIcon, Loader2, Moon, Sun } from 'lucide-react';
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  Download,
+  ImageIcon,
+  Loader2,
+  Moon,
+  Sun,
+} from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -29,14 +38,16 @@ import * as z from 'zod';
 
 const formSchema = z.object({
   prompt: z.string().min(1, 'Prompt is required'),
-  aspectRatio: z.string().optional(),
+  aspectRatio: z
+    .enum(['16:9', '1:1', '21:9', '2:3', '3:2', '4:5', '5:4', '9:16', '9:21'])
+    .optional(),
   negativePrompt: z.string().optional(),
   seed: z.string().optional(),
   stylePreset: z.string().optional(),
   outputFormat: z.enum(['webp', 'png', 'jpg']),
 });
 
-export default function Component() {
+export default function Home() {
   const [imageUrl, setImageUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -47,7 +58,7 @@ export default function Component() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       prompt: '',
-      aspectRatio: '',
+      aspectRatio: undefined,
       negativePrompt: '',
       seed: '',
       stylePreset: '',
@@ -138,7 +149,7 @@ export default function Component() {
                     <FormItem>
                       <FormLabel>Image Prompt</FormLabel>
                       <FormControl>
-                        <Input
+                        <Textarea
                           placeholder='Enter your image prompt here...'
                           {...field}
                         />
@@ -162,23 +173,41 @@ export default function Component() {
                         type='button' // Prevent form submission
                       >
                         <span className='sr-only'>Toggle</span>
-                        <ChevronDownIcon className='h-4 w-4 text-gray-400' />
+                        {showMoreOptions ? (
+                          <ChevronUpIcon className='h-4 w-4 text-gray-400' />
+                        ) : (
+                          <ChevronDownIcon className='h-4 w-4 text-gray-400' />
+                        )}
                       </Button>
                     </div>
                   </CollapsibleTrigger>
-                  <CollapsibleContent className='mt-2 space-y-4'>
+                  <CollapsibleContent className='mt-2 space-y-4 transition-all duration-500 ease-in-out'>
                     <FormField
                       control={form.control}
                       name='aspectRatio'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Aspect Ratio</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder='e.g., 1:1, 16:9, 4:3'
-                              {...field}
-                            />
-                          </FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder='Select aspect ratio' />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value='16:9'>16:9</SelectItem>
+                              <SelectItem value='1:1'>1:1</SelectItem>
+                              <SelectItem value='21:9'>21:9</SelectItem>
+                              <SelectItem value='2:3'>2:3</SelectItem>
+                              <SelectItem value='3:2'>3:2</SelectItem>
+                              <SelectItem value='4:5'>4:5</SelectItem>
+                              <SelectItem value='5:4'>5:4</SelectItem>
+                              <SelectItem value='9:16'>9:16</SelectItem>
+                              <SelectItem value='9:21'>9:21</SelectItem>
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
