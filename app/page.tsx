@@ -22,7 +22,6 @@ export default async function Home() {
           <SidebarTrigger />
           <ImageGenerator />
         </div>
-        adana
       </main>
     </SidebarLayout>
   );
