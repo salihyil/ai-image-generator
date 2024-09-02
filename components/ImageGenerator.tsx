@@ -30,7 +30,7 @@ import {
   Moon,
   Sun,
 } from 'lucide-react';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -55,6 +55,8 @@ export default function ImageGenerator() {
   const [error, setError] = useState('');
   const { theme, setTheme } = useTheme();
   const [showMoreOptions, setShowMoreOptions] = useState(false);
+  const { data: session } = useSession();
+  const userName = session?.user?.name || 'User';
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -123,7 +125,7 @@ export default function ImageGenerator() {
   return (
     <div className='container mx-auto p-4'>
       <header className='flex justify-between items-center py-4'>
-        <h1 className='text-2xl font-bold'>My App</h1>
+        <h1 className='text-2xl font-bold'>Welcome Back, {userName}</h1>
         <nav>
           <ul className='flex space-x-4'>
             <li>
@@ -132,7 +134,7 @@ export default function ImageGenerator() {
                 className='text-blue-500 hover:underline'>
                 Home
               </Link>
-            </li> 
+            </li>
             <li>
               <Link
                 href='/login'
