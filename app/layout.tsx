@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import AuthProvider from './auth-provider';
 import './globals.css';
-import { Providers } from './providers';
+import { ThemeProvider } from '@/components/theme-provider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,9 +21,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       suppressHydrationWarning>
       <body>
         <AuthProvider session={session}>
-          <Providers>{children}</Providers>
+          <ThemeProvider
+            attribute='class'
+            defaultTheme='system'
+            enableSystem
+            disableTransitionOnChange>
+            {children}
+          </ThemeProvider>
         </AuthProvider>
-         <Toaster />
+        <Toaster />
       </body>
     </html>
   );
