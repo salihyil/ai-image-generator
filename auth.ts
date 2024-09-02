@@ -11,13 +11,13 @@ const authOptions: AuthOptions = {
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        username: { label: 'Username', type: 'text' },
+        email: { label: 'Email', type: 'text' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         // Burada gerçek kimlik doğrulama mantığınızı uygulayın
-        if (credentials?.username === 'salihyil' && credentials?.password === '123456') {
-          return { id: '1', name: 'Salih', email: 'salih@yilmaz.com' };
+        if (credentials?.email === 'admin@gmail.com' && credentials?.password === '123456') {
+          return { id: '1', name: 'Admin', username: 'admin', email: 'admin@gmail.com' };
         }
         return null;
       },
