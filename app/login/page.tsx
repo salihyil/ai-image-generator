@@ -21,7 +21,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { FaEye, FaEyeSlash, FaGithub } from 'react-icons/fa'; // Yeni import
+import { FaEye, FaEyeSlash, FaGithub, FaGoogle } from 'react-icons/fa'; // Yeni import
 import * as z from 'zod';
 
 const formSchema = z.object({
@@ -67,10 +67,6 @@ export default function Login() {
       router.push('/'); // veya istediğiniz yönlendirme sayfası
     }
     setLoading(false);
-  };
-
-  const handleGithubLogin = () => {
-    signIn('github');
   };
 
   return (
@@ -163,9 +159,18 @@ export default function Login() {
             <Button
               variant='outline'
               className='w-full'
-              onClick={handleGithubLogin}>
+              onClick={() => signIn('github')}>
               <FaGithub className='mr-2 h-4 w-4' />
               Continue with Github
+            </Button>
+          </div>
+          <div className='mt-4'>
+            <Button
+              variant='outline'
+              className='w-full'
+              onClick={() => signIn('google')}>
+              <FaGoogle className='mr-2 h-4 w-4' />
+              Continue with Google
             </Button>
           </div>
           <p className='text-center mt-4'>
