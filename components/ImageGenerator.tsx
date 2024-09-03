@@ -123,255 +123,231 @@ export default function ImageGenerator() {
   };
 
   return (
-    <div className='container mx-auto p-4'>
-      <header className='flex justify-between items-center py-4'>
-        <h1 className='text-2xl font-bold'>Welcome Back, {userName}</h1>
-        <nav>
-          <ul className='flex space-x-4'>
-            <li>
-              <Link
-                href='/'
-                className='text-blue-500 hover:underline'>
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link
-                href='/login'
-                onClick={handleLogout}
-                className='text-blue-500 hover:underline'>
-                Logout
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      </header>
-      <div className='flex flex-col md:flex-row gap-8'>
-        <Card className='w-full md:w-1/2'>
-          <CardHeader>
-            <div className='flex justify-between items-center'>
-              <CardTitle>AI Image Generator</CardTitle>
-              <Button
-                variant='ghost'
-                size='icon'
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
-                {theme === 'dark' ? (
-                  <Sun className='h-[1.2rem] w-[1.2rem]' />
-                ) : (
-                  <Moon className='h-[1.2rem] w-[1.2rem]' />
-                )}
-                <span className='sr-only'>Toggle theme</span>
-              </Button>
-            </div>
-            <CardDescription>
-              Enter a prompt and optional parameters to generate an AI image
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form
-                onSubmit={onSubmit}
-                className='space-y-4'>
-                <FormField
-                  control={form.control}
-                  name='prompt'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Image Prompt</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder='Enter your image prompt here...'
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <Collapsible
-                  open={showMoreOptions}
-                  onOpenChange={setShowMoreOptions}
-                  className='mt-4'>
-                  <CollapsibleTrigger asChild>
-                    <div className='flex items-center justify-between cursor-pointer'>
-                      <span className='text-sm text-gray-400'>Additional Settings</span>
-                      <Button
-                        variant='ghost'
-                        size='sm'
-                        className='p-0'
-                        type='button' // Prevent form submission
-                      >
-                        <span className='sr-only'>Toggle</span>
-                        {showMoreOptions ? (
-                          <ChevronUpIcon className='h-4 w-4 text-gray-400' />
-                        ) : (
-                          <ChevronDownIcon className='h-4 w-4 text-gray-400' />
-                        )}
-                      </Button>
-                    </div>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className='mt-2 space-y-4 transition-all duration-500 ease-in-out'>
-                    <FormField
-                      control={form.control}
-                      name='aspectRatio'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Aspect Ratio</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder='Select aspect ratio' />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value='16:9'>16:9</SelectItem>
-                              <SelectItem value='1:1'>1:1</SelectItem>
-                              <SelectItem value='21:9'>21:9</SelectItem>
-                              <SelectItem value='2:3'>2:3</SelectItem>
-                              <SelectItem value='3:2'>3:2</SelectItem>
-                              <SelectItem value='4:5'>4:5</SelectItem>
-                              <SelectItem value='5:4'>5:4</SelectItem>
-                              <SelectItem value='9:16'>9:16</SelectItem>
-                              <SelectItem value='9:21'>9:21</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='negativePrompt'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Negative Prompt</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder='Enter negative prompt here...'
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='seed'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Seed</FormLabel>
-                          <FormControl>
-                            <Input
-                              type='number'
-                              placeholder='Enter seed (optional)'
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='stylePreset'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Style Preset</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder='Enter style preset (optional)'
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </CollapsibleContent>
-                </Collapsible>
-
-                <FormField
-                  control={form.control}
-                  name='outputFormat'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Output Format</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder='Select output format' />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value='webp'>WebP</SelectItem>
-                          <SelectItem value='png'>PNG</SelectItem>
-                          <SelectItem value='jpg'>JPG</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <Button
-                  type='submit'
-                  disabled={loading}
-                  className='w-full'>
-                  {loading ? (
-                    <>
-                      <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      <ImageIcon className='mr-2 h-4 w-4' />
-                      Generate Image
-                    </>
-                  )}
-                </Button>
-              </form>
-            </Form>
-            {error && <p className='text-sm text-red-500 mt-2'>{error}</p>}
-          </CardContent>
-        </Card>
-
-        <Card className='w-full md:w-1/2'>
-          <CardHeader>
-            <div className='flex justify-between items-center'>
-              <CardTitle>Generated Image</CardTitle>
-              {imageUrl && (
-                <Button
-                  onClick={handleDownload}
-                  className='flex items-center'>
-                  <Download className='mr-2 h-4 w-4' />
-                  Download
-                </Button>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <Card className="w-full">
+        <CardHeader>
+          <div className='flex justify-between items-center'>
+            <CardTitle>AI Image Generator</CardTitle>
+            <Button
+              variant='ghost'
+              size='icon'
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+              {theme === 'dark' ? (
+                <Sun className='h-[1.2rem] w-[1.2rem]' />
+              ) : (
+                <Moon className='h-[1.2rem] w-[1.2rem]' />
               )}
-            </div>
-          </CardHeader>
-          <CardContent>
-            {imageUrl ? (
-              <Image
-                src={imageUrl}
-                alt='Generated AI Image'
-                width={500}
-                height={300}
-                className='w-full h-auto rounded-lg shadow-lg'
+              <span className='sr-only'>Toggle theme</span>
+            </Button>
+          </div>
+          <CardDescription>
+            Enter a prompt and optional parameters to generate an AI image
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form
+              onSubmit={onSubmit}
+              className='space-y-4'>
+              <FormField
+                control={form.control}
+                name='prompt'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Image Prompt</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder='Enter your image prompt here...'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            ) : (
-              <div className='flex items-center justify-center h-64 bg-gray-100 dark:bg-gray-800 rounded-lg'>
-                <p className='text-gray-500 dark:text-gray-400'>Image will appear here</p>
-              </div>
+
+              <Collapsible
+                open={showMoreOptions}
+                onOpenChange={setShowMoreOptions}
+                className='mt-4'>
+                <CollapsibleTrigger asChild>
+                  <div className='flex items-center justify-between cursor-pointer'>
+                    <span className='text-sm text-gray-400'>Additional Settings</span>
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className='p-0'
+                      type='button' // Prevent form submission
+                    >
+                      <span className='sr-only'>Toggle</span>
+                      {showMoreOptions ? (
+                        <ChevronUpIcon className='h-4 w-4 text-gray-400' />
+                      ) : (
+                        <ChevronDownIcon className='h-4 w-4 text-gray-400' />
+                      )}
+                    </Button>
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent className='mt-2 space-y-4 transition-all duration-500 ease-in-out'>
+                  <FormField
+                    control={form.control}
+                    name='aspectRatio'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Aspect Ratio</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder='Select aspect ratio' />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value='16:9'>16:9</SelectItem>
+                            <SelectItem value='1:1'>1:1</SelectItem>
+                            <SelectItem value='21:9'>21:9</SelectItem>
+                            <SelectItem value='2:3'>2:3</SelectItem>
+                            <SelectItem value='3:2'>3:2</SelectItem>
+                            <SelectItem value='4:5'>4:5</SelectItem>
+                            <SelectItem value='5:4'>5:4</SelectItem>
+                            <SelectItem value='9:16'>9:16</SelectItem>
+                            <SelectItem value='9:21'>9:21</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name='negativePrompt'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Negative Prompt</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder='Enter negative prompt here...'
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name='seed'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Seed</FormLabel>
+                        <FormControl>
+                          <Input
+                            type='number'
+                            placeholder='Enter seed (optional)'
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name='stylePreset'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Style Preset</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder='Enter style preset (optional)'
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CollapsibleContent>
+              </Collapsible>
+
+              <FormField
+                control={form.control}
+                name='outputFormat'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Output Format</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder='Select output format' />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value='webp'>WebP</SelectItem>
+                        <SelectItem value='png'>PNG</SelectItem>
+                        <SelectItem value='jpg'>JPG</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <Button
+                type='submit'
+                disabled={loading}
+                className='w-full'>
+                {loading ? (
+                  <>
+                    <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <ImageIcon className='mr-2 h-4 w-4' />
+                    Generate Image
+                  </>
+                )}
+              </Button>
+            </form>
+          </Form>
+          {error && <p className='text-sm text-red-500 mt-2'>{error}</p>}
+        </CardContent>
+      </Card>
+
+      <Card className="w-full">
+        <CardHeader>
+          <div className='flex justify-between items-center'>
+            <CardTitle>Generated Image</CardTitle>
+            {imageUrl && (
+              <Button
+                onClick={handleDownload}
+                className='flex items-center'>
+                <Download className='mr-2 h-4 w-4' />
+                Download
+              </Button>
             )}
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {imageUrl ? (
+            <Image
+              src={imageUrl}
+              alt='Generated AI Image'
+              width={500}
+              height={300}
+              className='w-full h-auto rounded-lg shadow-lg'
+            />
+          ) : (
+            <div className='flex items-center justify-center h-64 bg-gray-100 dark:bg-gray-800 rounded-lg'>
+              <p className='text-gray-500 dark:text-gray-400'>Image will appear here</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -15,11 +15,10 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
+
   return (
-    <html
-      lang='en'
-      suppressHydrationWarning>
-      <body>
+    <html lang='en' suppressHydrationWarning>
+      <body className={inter.className}>
         <AuthProvider session={session}>
           <ThemeProvider
             attribute='class'
