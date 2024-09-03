@@ -2,9 +2,6 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { CreditCard, Download } from 'lucide-react';
 
@@ -20,20 +17,20 @@ export default function BillingPage() {
             <CardDescription>You are currently on the Pro plan</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
+            <dl className="space-y-2">
               <div className="flex justify-between">
-                <span>Plan:</span>
-                <span className="font-medium">Pro</span>
+                <dt>Plan:</dt>
+                <dd className="font-medium">Pro</dd>
               </div>
               <div className="flex justify-between">
-                <span>Price:</span>
-                <span className="font-medium">$19.99/month</span>
+                <dt>Price:</dt>
+                <dd className="font-medium">$19.99/month</dd>
               </div>
               <div className="flex justify-between">
-                <span>Billing Period:</span>
-                <span className="font-medium">Monthly</span>
+                <dt>Billing Period:</dt>
+                <dd className="font-medium">Monthly</dd>
               </div>
-            </div>
+            </dl>
           </CardContent>
           <CardFooter>
             <Button className="w-full">Upgrade Plan</Button>
@@ -47,7 +44,7 @@ export default function BillingPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center space-x-4">
-              <CreditCard className="h-6 w-6" />
+              <CreditCard className="h-6 w-6" aria-hidden="true" />
               <div>
                 <p className="font-medium">Visa ending in 1234</p>
                 <p className="text-sm text-gray-500">Expires 12/2024</p>
@@ -82,7 +79,7 @@ export default function BillingPage() {
                 <TableCell>Paid</TableCell>
                 <TableCell>
                   <Button variant="ghost" size="sm">
-                    <Download className="mr-2 h-4 w-4" />
+                    <Download className="mr-2 h-4 w-4" aria-hidden="true" />
                     Download
                   </Button>
                 </TableCell>

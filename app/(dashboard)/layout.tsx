@@ -1,11 +1,7 @@
 import { AppSidebar } from '@/components/app-sidebar';
 import { SidebarLayout, SidebarTrigger } from '@/components/ui/sidebar';
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarLayout>
       <AppSidebar />
@@ -16,5 +12,5 @@ export default function DashboardLayout({
         </div>
       </main>
     </SidebarLayout>
-  )
+  );
 }

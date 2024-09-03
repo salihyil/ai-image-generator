@@ -181,18 +181,13 @@ const data = {
         },
         {
           title: 'Billing',
-          url: '#',
+          url: '/billing',
         },
         {
           title: 'Limits',
           url: '#',
         },
       ],
-    },
-    {
-      title: 'Billing',
-      url: '/billing',
-      icon: CreditCard,
     },
   ],
 

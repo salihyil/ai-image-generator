@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { signOut } from 'next-auth/react';
+import Link from 'next/link';
 
 export function NavUser({
   user,
@@ -72,7 +73,7 @@ export function NavUser({
           </DropdownMenuItem>
           <DropdownMenuItem className='gap-2'>
             <CreditCard className='h-4 w-4 text-muted-foreground' />
-            Billing
+            <Link href='/billing'>Billing</Link>
           </DropdownMenuItem>
           <DropdownMenuItem className='gap-2'>
             <Bell className='h-4 w-4 text-muted-foreground' />
