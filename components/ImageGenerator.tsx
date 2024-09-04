@@ -33,7 +33,7 @@ import {
 import { useSession } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -49,7 +49,6 @@ const formSchema = z.object({
 });
 
 export default function ImageGenerator() {
-  const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
   const [imageUrl, setImageUrl] = useState('');
   const [loading, setLoading] = useState(false);

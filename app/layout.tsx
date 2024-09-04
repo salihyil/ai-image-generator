@@ -1,7 +1,9 @@
 import { getSession } from '@/auth';
 import { AuthProvider } from '@/components/auth-provider';
+import LoadingScreen from '@/components/LoadingScreen';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
+import { LoadingProvider } from '@/contexts/LoadingContext';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -17,20 +19,22 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const session = await getSession();
 
   return (
-    <html
-      lang='en'
-      suppressHydrationWarning>
+    <html lang='en' suppressHydrationWarning>
       <body className={inter.className}>
-        <AuthProvider session={session}>
-          <ThemeProvider
-            attribute='class'
-            defaultTheme='system'
-            enableSystem
-            disableTransitionOnChange>
-            {children}
-          </ThemeProvider>
-        </AuthProvider>
-        <Toaster />
+        <LoadingProvider>
+          <AuthProvider session={session}>
+            <ThemeProvider
+              attribute='class'
+              defaultTheme='system'
+              enableSystem
+              disableTransitionOnChange
+            >
+              <LoadingScreen />
+              {children}
+            </ThemeProvider>
+          </AuthProvider>
+          <Toaster />
+        </LoadingProvider>
       </body>
     </html>
   );

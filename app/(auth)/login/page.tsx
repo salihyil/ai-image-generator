@@ -14,6 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
+import { useLoading } from '@/contexts/LoadingContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { signIn } from 'next-auth/react';
@@ -30,10 +31,10 @@ const formSchema = z.object({
 });
 
 export default function Login() {
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false); // Yeni state
   const router = useRouter();
   const { toast } = useToast();
+  const { isLoading, setIsLoading } = useLoading();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,7 +45,7 @@ export default function Login() {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setLoading(true);
+    setIsLoading(true);
 
     const result = await signIn('credentials', {
       email: values.email,
@@ -58,15 +59,16 @@ export default function Login() {
         title: 'Login Failed',
         description: 'Invalid email or password. Please try again.',
       });
+      setIsLoading(false);
     } else {
       toast({
         variant: 'success',
         title: 'Login Successful',
         description: 'Welcome back!',
       });
-      router.push('/'); // veya istediğiniz yönlendirme sayfası
+      router.push('/'); 
     }
-    setLoading(false);
+    setIsLoading(false);
   };
 
   return (
@@ -143,8 +145,8 @@ export default function Login() {
               <Button
                 type='submit'
                 className='w-full'
-                disabled={loading}>
-                {loading ? (
+                disabled={isLoading}>
+                {isLoading ? (
                   <>
                     <Loader2 className='mr-2 h-4 w-4 animate-spin' />
                     Logging in...
