@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { imageGeneratorSchema } from '@/schema/imageGeneratorSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   ChevronDownIcon,
@@ -37,17 +38,6 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-const formSchema = z.object({
-  prompt: z.string().min(1, 'Prompt is required'),
-  aspectRatio: z
-    .enum(['16:9', '1:1', '21:9', '2:3', '3:2', '4:5', '5:4', '9:16', '9:21'])
-    .optional(),
-  negativePrompt: z.string().optional(),
-  seed: z.string().optional(),
-  stylePreset: z.string().optional(),
-  outputFormat: z.enum(['webp', 'png', 'jpg']),
-});
-
 export default function ImageGenerator() {
   const { theme, setTheme } = useTheme();
   const [imageUrl, setImageUrl] = useState('');
@@ -57,8 +47,8 @@ export default function ImageGenerator() {
   const { data: session } = useSession();
   const userName = session?.user?.name || 'User';
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof imageGeneratorSchema>>({
+    resolver: zodResolver(imageGeneratorSchema),
     defaultValues: {
       prompt: '',
       aspectRatio: undefined,
@@ -69,7 +59,7 @@ export default function ImageGenerator() {
     },
   });
 
-  const generateImage = async (values: z.infer<typeof formSchema>) => {
+  const generateImage = async (values: z.infer<typeof imageGeneratorSchema>) => {
     setLoading(true);
     setError('');
     setImageUrl('');

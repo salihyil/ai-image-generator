@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
 import { useLoading } from '@/contexts/LoadingContext';
+import { loginSchema } from '@/schema/loginSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { signIn } from 'next-auth/react';
@@ -25,26 +26,21 @@ import { useForm } from 'react-hook-form';
 import { FaEye, FaEyeSlash, FaGithub, FaGoogle } from 'react-icons/fa'; // Yeni import
 import * as z from 'zod';
 
-const formSchema = z.object({
-  email: z.string().min(1, 'Email is required'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-});
-
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false); // Yeni state
   const router = useRouter();
   const { toast } = useToast();
   const { isLoading, setIsLoading } = useLoading();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
 
     const result = await signIn('credentials', {
@@ -66,7 +62,7 @@ export default function Login() {
         title: 'Login Successful',
         description: 'Welcome back!',
       });
-      router.push('/'); 
+      router.push('/');
     }
     setIsLoading(false);
   };
