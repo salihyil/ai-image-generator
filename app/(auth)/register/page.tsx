@@ -23,6 +23,9 @@ import { useForm } from 'react-hook-form';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import * as z from 'zod';
 import { registerUser } from './actions';
+import { db } from '@/db';
+import { eq } from 'drizzle-orm';
+import { usersTable } from '@/db/schema';
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -55,11 +58,19 @@ export default function Register() {
       router.push('/login');
     } catch (error) {
       console.error('Registration error:', error);
-      toast({
-        title: 'Registration failed',
-        description: 'An error occurred during registration. Please try again.',
-        variant: 'destructive',
-      });
+      if (error instanceof Error) {
+        toast({
+          title: 'Registration failed',
+          description: error.message,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Registration failed',
+          description: 'An unexpected error occurred during registration. Please try again.',
+          variant: 'destructive',
+        });
+      }
     } finally {
       setIsLoading(false);
     }
