@@ -1,57 +1,12 @@
-import { AuthOptions, getServerSession } from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import GithubProvider from 'next-auth/providers/github';
-import GoogleProvider from 'next-auth/providers/google';
+import NextAuth from 'next-auth';
 
-const authOptions: AuthOptions = {
-  providers: [
-    GithubProvider({
-      clientId: process.env.GITHUB_ID as string,
-      clientSecret: process.env.GITHUB_SECRET as string,
-    }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_ID as string,
-      clientSecret: process.env.GOOGLE_SECRET as string,
-    }),
-    CredentialsProvider({
-      name: 'Credentials',
-      credentials: {
-        email: { label: 'Email', type: 'text' },
-        password: { label: 'Password', type: 'password' },
-      },
-      async authorize(credentials) {
-        // Burada gerçek kimlik doğrulama mantığınızı uygulayın
-        if (credentials?.email === 'admin@gmail.com' && credentials?.password === '123456') {
-          return { id: '1', name: 'Admin', username: 'admin', email: 'admin@gmail.com' };
-        }
-        return null;
-      },
-    }),
-  ],
-  pages: {
-    signIn: '/login',
-    signOut: '/',
-  },
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.email = token.email as string;
-      }
-      return session;
-    },
-  },
-};
+import authConfig from '@/auth.config';
 
-/**
- * Helper function to get the session on the server without having to import the authOptions object every single time
- * @returns The session object or null
- */
-const getSession = () => getServerSession(authOptions);
+import { DrizzleAdapter } from '@auth/drizzle-adapter';
+import { db } from '@/db';
 
-export { authOptions, getSession };
+export const { handlers, signIn, signOut, auth } = NextAuth({
+  adapter: DrizzleAdapter(db),
+  session: { strategy: 'jwt' },
+  ...authConfig,
+});

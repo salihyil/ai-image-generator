@@ -1,30 +1,30 @@
-import { getToken } from 'next-auth/jwt';
-import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/auth';
+import { NextResponse } from 'next/server';
 
-export async function middleware(request: NextRequest) {
-  const token = await getToken({ req: request });
+export default auth((req) => {
+  const user = req.auth?.user;
 
   if (
-    !token &&
-    request.nextUrl.pathname !== '/login' &&
-    request.nextUrl.pathname !== '/register' &&
-    request.nextUrl.pathname !== '/forgot-password'
+    !user &&
+    req.nextUrl.pathname !== '/login' &&
+    req.nextUrl.pathname !== '/register' &&
+    req.nextUrl.pathname !== '/forgot-password'
   ) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL('/login', req.url));
   }
 
   if (
-    token &&
-    (request.nextUrl.pathname === '/login' ||
-      request.nextUrl.pathname === '/register' ||
-      request.nextUrl.pathname === '/forgot-password')
+    user &&
+    (req.nextUrl.pathname === '/login' ||
+      req.nextUrl.pathname === '/register' ||
+      req.nextUrl.pathname === '/forgot-password')
   ) {
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/', req.url));
   }
-
   return NextResponse.next();
-}
+});
 
+// Optionally, don't invoke Middleware on some paths
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };

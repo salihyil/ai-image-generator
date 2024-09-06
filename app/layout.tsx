@@ -1,4 +1,4 @@
-import { getSession } from '@/auth';
+import { auth } from '@/auth';
 import { AuthProvider } from '@/components/auth-provider';
 import LoadingScreen from '@/components/LoadingScreen';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -16,10 +16,12 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const session = await getSession();
+  const session = await auth();
 
   return (
-    <html lang='en' suppressHydrationWarning>
+    <html
+      lang='en'
+      suppressHydrationWarning>
       <body className={inter.className}>
         <LoadingProvider>
           <AuthProvider session={session}>
@@ -27,8 +29,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               attribute='class'
               defaultTheme='system'
               enableSystem
-              disableTransitionOnChange
-            >
+              disableTransitionOnChange>
               <LoadingScreen />
               {children}
             </ThemeProvider>
