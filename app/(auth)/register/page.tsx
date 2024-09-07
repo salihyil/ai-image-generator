@@ -13,19 +13,16 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { useLoading } from '@/contexts/LoadingContext';
-import { registerSchema } from '@/schema/registerSchema';
+import { passwordConditions, registerSchema } from '@/schema/registerSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useForm, useWatch } from 'react-hook-form';
+import { FaCheck, FaEye, FaEyeSlash, FaTimes } from 'react-icons/fa';
 import * as z from 'zod';
 import { registerUser } from './actions';
-import { db } from '@/db';
-import { eq } from 'drizzle-orm';
-import { usersTable } from '@/db/schema';
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -41,7 +38,32 @@ export default function Register() {
       password: '',
       confirmPassword: '',
     },
+    mode: 'onChange',
   });
+
+  const password = useWatch({
+    control: form.control,
+    name: 'password',
+  });
+
+  const PasswordConditionItem = ({
+    regex,
+    text,
+    password,
+  }: {
+    regex: RegExp;
+    text: string;
+    password: string;
+  }) => {
+    const condition = regex.test(password);
+    return (
+      <li
+        className={`flex items-center space-x-2 ${condition ? 'text-green-500' : 'text-red-500'}`}>
+        {condition ? <FaCheck /> : <FaTimes />}
+        <span>{text}</span>
+      </li>
+    );
+  };
 
   const onSubmit = async (data: z.infer<typeof registerSchema>) => {
     setIsLoading(true);
@@ -140,7 +162,18 @@ export default function Register() {
                         </div>
                       </div>
                     </FormControl>
-                    <FormMessage />
+                    {password && (
+                      <ul className='mt-2 text-sm'>
+                        {passwordConditions.map(({ key, text, regex }) => (
+                          <PasswordConditionItem
+                            key={key}
+                            regex={regex}
+                            text={text}
+                            password={password}
+                          />
+                        ))}
+                      </ul>
+                    )}
                   </FormItem>
                 )}
               />
