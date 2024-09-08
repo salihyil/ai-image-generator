@@ -17,7 +17,6 @@ import { sendPasswordResetLink } from './actions';
 export function SendResetEmail() {
   const [state, formAction] = useFormState(sendPasswordResetLink, null);
   const router = useRouter();
-  console.log('state:', state);
 
   useEffect(() => {
     if (state?.success) {
