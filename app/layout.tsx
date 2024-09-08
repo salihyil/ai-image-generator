@@ -3,6 +3,7 @@ import { AuthProvider } from '@/components/auth-provider';
 import LoadingScreen from '@/components/LoadingScreen';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
+import { Toaster as SonnerToaster } from 'sonner';
 import { LoadingProvider } from '@/contexts/LoadingContext';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -34,8 +35,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               {children}
             </ThemeProvider>
           </AuthProvider>
-          <Toaster />
         </LoadingProvider>
+        <Toaster />
+        <SonnerToaster />
       </body>
     </html>
   );

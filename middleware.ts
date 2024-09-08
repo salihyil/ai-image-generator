@@ -1,25 +1,31 @@
 import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
+import { Paths } from './lib/constants';
 
 export default auth((req) => {
   const user = req.auth?.user;
 
+  // Allow access to reset password pages with tokens
+  if (req.nextUrl.pathname.startsWith(Paths.ResetPassword + '/')) {
+    return NextResponse.next();
+  }
+
   if (
     !user &&
-    req.nextUrl.pathname !== '/login' &&
-    req.nextUrl.pathname !== '/register' &&
-    req.nextUrl.pathname !== '/forgot-password'
+    req.nextUrl.pathname !== Paths.Login &&
+    req.nextUrl.pathname !== Paths.Register &&
+    req.nextUrl.pathname !== Paths.ResetPassword
   ) {
-    return NextResponse.redirect(new URL('/login', req.url));
+    return NextResponse.redirect(new URL(Paths.Login, req.url));
   }
 
   if (
     user &&
-    (req.nextUrl.pathname === '/login' ||
-      req.nextUrl.pathname === '/register' ||
-      req.nextUrl.pathname === '/forgot-password')
+    (req.nextUrl.pathname === Paths.Login ||
+      req.nextUrl.pathname === Paths.Register ||
+      req.nextUrl.pathname === Paths.ResetPassword)
   ) {
-    return NextResponse.redirect(new URL('/', req.url));
+    return NextResponse.redirect(new URL(Paths.Home, req.url));
   }
   return NextResponse.next();
 });

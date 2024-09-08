@@ -1,0 +1,5 @@
+[2024-09-08T14:01:35.781Z] [INFO] 📨 Email sent to: salih_yil@live.com with template: PasswordReset and props: {"link":"http://localhost:3000/reset-password/35d4463e-bcdb-498c-9dce-8fc65ebfb133"}
+[2024-09-08T14:03:34.171Z] [INFO] 📨 Email sent to: salih_yil@live.com with template: PasswordReset and props: {"link":"http://localhost:3000/reset-password/85e68388-613a-4e06-b03c-70a16a4f2188"}
+[2024-09-08T14:05:01.868Z] [INFO] 📨 Email sent to: salih_yil@live.com with template: PasswordReset and props: {"link":"http://localhost:3000/reset-password/56422047-6a8f-42de-8f50-28425adc1bd1"}
+[2024-09-08T15:35:33.767Z] [INFO] 📨 Email sent to: resimler654@gmail.com with template: PasswordReset and props: {"link":"http://localhost:3000/reset-password/8b8cb683-e2b9-47d2-a64b-3243708d2774"}
+[2024-09-08T15:37:45.050Z] [INFO] 📨 Email sent to: resimler654@gmail.com with template: PasswordReset and props: {"link":"http://localhost:3000/reset-password/9625c5f4-7148-4d75-b8f5-887185bce86a"}

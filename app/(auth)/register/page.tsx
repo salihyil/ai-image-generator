@@ -23,6 +23,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { FaCheck, FaEye, FaEyeSlash, FaTimes } from 'react-icons/fa';
 import * as z from 'zod';
 import { registerUser } from './actions';
+import { Paths } from '@/lib/constants';
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -77,7 +78,7 @@ export default function Register() {
       });
 
       // Redirect to login page
-      router.push('/login');
+      router.push(Paths.Login);
     } catch (error) {
       console.error('Registration error:', error);
       if (error instanceof Error) {

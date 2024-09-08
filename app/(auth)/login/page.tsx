@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
 import { useLoading } from '@/contexts/LoadingContext';
+import { Paths } from '@/lib/constants';
 import { loginSchema } from '@/schema/loginSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
@@ -62,7 +63,7 @@ export default function Login() {
         title: 'Login Successful',
         description: 'Welcome back!',
       });
-      router.push('/');
+      router.push(Paths.Home);
     }
     setIsLoading(false);
   };
@@ -133,7 +134,7 @@ export default function Login() {
                   </Label>
                 </div>
                 <Link
-                  href='/forgot-password'
+                  href={Paths.ResetPassword}
                   className='inline-block text-sm underline'>
                   Forgot your password?
                 </Link>
