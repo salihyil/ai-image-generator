@@ -26,9 +26,11 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaEye, FaEyeSlash, FaGithub, FaGoogle } from 'react-icons/fa'; // Yeni import
 import * as z from 'zod';
+import { useEffect } from 'react';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false); // Yeni state
+  const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
   const { isLoading, setIsLoading } = useLoading();
@@ -40,6 +42,13 @@ export default function Login() {
       password: '',
     },
   });
+
+  useEffect(() => {
+    const rememberedEmail = localStorage.getItem('rememberedEmail');
+    if (rememberedEmail) {
+      form.setValue('email', rememberedEmail);
+    }
+  }, [form]);
 
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
@@ -58,6 +67,11 @@ export default function Login() {
       });
       setIsLoading(false);
     } else {
+      if (rememberMe) {
+        localStorage.setItem('rememberedEmail', values.email);
+      } else {
+        localStorage.removeItem('rememberedEmail');
+      }
       toast({
         variant: 'success',
         title: 'Login Successful',
@@ -126,6 +140,8 @@ export default function Login() {
                   <Checkbox
                     id='rememberMe'
                     className='mr-2'
+                    checked={rememberMe}
+                    onCheckedChange={(checked) => setRememberMe(checked as boolean)}
                   />
                   <Label
                     htmlFor='rememberMe'
