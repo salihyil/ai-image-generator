@@ -1,8 +1,8 @@
-import axios from 'axios';
-import { NextResponse } from 'next/server';
+import axios from "axios";
+import { NextResponse } from "next/server";
 
 const STABILITY_API_KEY = process.env.STABILITY_API_KEY;
-const API_HOST = 'https://api.stability.ai/v2beta';
+const API_HOST = "https://api.stability.ai/v2beta";
 
 export async function POST(req: Request) {
   try {
@@ -10,12 +10,12 @@ export async function POST(req: Request) {
       await req.json();
 
     if (!STABILITY_API_KEY) {
-      throw new Error('Missing Stability API key');
+      throw new Error("Missing Stability API key");
     }
 
     const payload: any = {
       prompt,
-      output_format: output_format || 'webp',
+      output_format: output_format || "webp",
     };
 
     // Add optional parameters if they are provided
@@ -29,42 +29,42 @@ export async function POST(req: Request) {
       axios.toFormData(payload),
       {
         validateStatus: () => true, // Allow any status code
-        responseType: 'arraybuffer',
+        responseType: "arraybuffer",
         headers: {
           Authorization: `Bearer ${STABILITY_API_KEY}`,
-          Accept: 'image/*',
+          Accept: "image/*",
         },
       }
     );
 
     if (response.status !== 200) {
-      let errorMessage = 'Stability API error';
-      const responseText = Buffer.from(response.data).toString('utf-8');
-      
+      let errorMessage = "Stability API error";
+      const responseText = Buffer.from(response.data).toString("utf-8");
+
       try {
         const errorData = JSON.parse(responseText);
         errorMessage = errorData.message || errorMessage;
       } catch (parseError) {
         // If parsing fails, use the response text as is
-        errorMessage = responseText || errorMessage;
+        errorMessage = responseText.trim() || errorMessage;
       }
-      
-      console.error('Stability API Error:', {
+
+      console.error("Stability API Error:", {
         status: response.status,
         message: errorMessage,
         responseHeaders: response.headers,
       });
-      
+
       throw new Error(`${errorMessage} (Status: ${response.status})`);
     }
 
-    const imageBase64 = Buffer.from(response.data).toString('base64');
-    const imageUrl = `data:image/${output_format || 'webp'};base64,${imageBase64}`;
+    const imageBase64 = Buffer.from(response.data).toString("base64");
+    const imageUrl = `data:image/${output_format || "webp"};base64,${imageBase64}`;
 
     return NextResponse.json({ imageUrl });
   } catch (error: unknown) {
-    console.error('Error generating image:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Failed to generate image';
+    console.error("Error generating image:", error);
+    const errorMessage = error instanceof Error ? error.message : "Failed to generate image";
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
