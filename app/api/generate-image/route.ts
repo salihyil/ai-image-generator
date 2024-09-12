@@ -28,7 +28,7 @@ export async function POST(req: Request) {
       `${API_HOST}/stable-image/generate/ultra`,
       axios.toFormData(payload),
       {
-        validateStatus: undefined,
+        validateStatus: () => true, // Allow any status code
         responseType: 'arraybuffer',
         headers: {
           Authorization: `Bearer ${STABILITY_API_KEY}`,
@@ -38,11 +38,28 @@ export async function POST(req: Request) {
     );
 
     if (response.status !== 200) {
-      throw new Error(`Stability API error: ${response.status} ${response.data.toString()}`);
+      let errorMessage = 'Stability API error';
+      const responseText = Buffer.from(response.data).toString('utf-8');
+      
+      try {
+        const errorData = JSON.parse(responseText);
+        errorMessage = errorData.message || errorMessage;
+      } catch (parseError) {
+        // If parsing fails, use the response text as is
+        errorMessage = responseText || errorMessage;
+      }
+      
+      console.error('Stability API Error:', {
+        status: response.status,
+        message: errorMessage,
+        responseHeaders: response.headers,
+      });
+      
+      throw new Error(`${errorMessage} (Status: ${response.status})`);
     }
 
     const imageBase64 = Buffer.from(response.data).toString('base64');
-    const imageUrl = `data:image/webp;base64,${imageBase64}`;
+    const imageUrl = `data:image/${output_format || 'webp'};base64,${imageBase64}`;
 
     return NextResponse.json({ imageUrl });
   } catch (error: unknown) {
