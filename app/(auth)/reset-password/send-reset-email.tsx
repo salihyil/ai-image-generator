@@ -29,7 +29,7 @@ export function SendResetEmail() {
         icon: <ExclamationTriangleIcon className='h-5 w-5 text-destructive' />,
       });
     }
-  }, [state?.error, state?.success]);
+  }, [state?.error, state?.success, router]);
 
   return (
     <form

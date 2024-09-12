@@ -8,11 +8,11 @@ export default function NotFound() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>404 - Not Found</CardTitle>
-          <CardDescription>Oops! The page you're looking for doesn't exist.</CardDescription>
+          <CardDescription>Oops! The page you&apos;re looking for doesn&apos;t exist.</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            We couldn't find the requested resource. It might have been moved, deleted, or never existed.
+            We couldn&apos;t find the requested resource. It might have been moved, deleted, or never existed.
           </p>
         </CardContent>
         <CardFooter>
