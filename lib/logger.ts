@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+/* import * as fs from 'fs';
 import * as path from 'path';
 
 enum LogLevel {
@@ -67,3 +67,4 @@ class Logger {
 export const logger = new Logger(
   process.env.NODE_ENV === 'development' ? LogLevel.DEBUG : LogLevel.INFO
 );
+ */
