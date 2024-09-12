@@ -8,12 +8,12 @@ import { CreditCard, Download } from 'lucide-react';
 export default function BillingPage() {
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Billing</h1>
+      <h1 className="text-2xl font-bold mb-4 sm:mb-6 lg:mb-8">Billing</h1>
       
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+      <div className="grid gap-4 sm:gap-6 lg:gap-8 md:grid-cols-2">
+        <Card className="w-full">
           <CardHeader>
-            <CardTitle>Subscription Plan</CardTitle>
+            <CardTitle className="text-lg sm:text-xl">Subscription Plan</CardTitle>
             <CardDescription>You are currently on the Pro plan</CardDescription>
           </CardHeader>
           <CardContent>
@@ -37,16 +37,16 @@ export default function BillingPage() {
           </CardFooter>
         </Card>
 
-        <Card>
+        <Card className="w-full">
           <CardHeader>
-            <CardTitle>Payment Method</CardTitle>
+            <CardTitle className="text-lg sm:text-xl">Payment Method</CardTitle>
             <CardDescription>Manage your payment method</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center space-x-4">
-              <CreditCard className="h-6 w-6" aria-hidden="true" />
-              <div>
-                <p className="font-medium">Visa ending in 1234</p>
+              <CreditCard className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0" aria-hidden="true" />
+              <div className="min-w-0 flex-1">
+                <p className="font-medium truncate">Visa ending in 1234</p>
                 <p className="text-sm text-gray-500">Expires 12/2024</p>
               </div>
             </div>
@@ -57,30 +57,30 @@ export default function BillingPage() {
         </Card>
       </div>
 
-      <Card className="mt-8">
+      <Card className="mt-6 sm:mt-8 lg:mt-10">
         <CardHeader>
-          <CardTitle>Billing History</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">Billing History</CardTitle>
           <CardDescription>View your past invoices</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
+                <TableHead className="w-[80px] sm:w-[100px]">Date</TableHead>
                 <TableHead>Amount</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Invoice</TableHead>
+                <TableHead className="hidden sm:table-cell">Status</TableHead>
+                <TableHead className="text-right">Invoice</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               <TableRow>
-                <TableCell>2023-05-01</TableCell>
+                <TableCell className="font-medium">2023-05-01</TableCell>
                 <TableCell>$19.99</TableCell>
-                <TableCell>Paid</TableCell>
-                <TableCell>
-                  <Button variant="ghost" size="sm">
-                    <Download className="mr-2 h-4 w-4" aria-hidden="true" />
-                    Download
+                <TableCell className="hidden sm:table-cell">Paid</TableCell>
+                <TableCell className="text-right">
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <span className="sr-only">Download</span>
+                    <Download className="h-4 w-4" aria-hidden="true" />
                   </Button>
                 </TableCell>
               </TableRow>
