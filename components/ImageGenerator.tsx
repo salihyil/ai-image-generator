@@ -71,6 +71,7 @@ export default function ImageGenerator() {
         body: JSON.stringify({
           ...values,
           seed: values.seed ? parseInt(values.seed) : undefined,
+          aspect_ratio: values.aspectRatio,
         }),
       });
 
