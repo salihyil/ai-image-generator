@@ -69,31 +69,31 @@ export default function Register() {
   const onSubmit = async (data: z.infer<typeof registerSchema>) => {
     setIsLoading(true);
     try {
-      const newUser = await registerUser(data);
+      const result = await registerUser(data);
 
-      toast({
-        title: 'Registration successful',
-        description: `Welcome, ${newUser.name}! You can now log in with your new account.`,
-        variant: 'success',
-      });
-
-      // Redirect to login page
-      router.push(Paths.Login);
-    } catch (error) {
-      console.error('Registration error:', error);
-      if (error instanceof Error) {
+      if (result.success) {
         toast({
-          title: 'Registration failed',
-          description: error.message,
-          variant: 'destructive',
+          title: 'Registration successful',
+          description: `Welcome, ${result.user?.name}! You can now log in with your new account.`,
+          variant: 'success',
         });
+
+        // Redirect to login page
+        router.push(Paths.Login);
       } else {
         toast({
           title: 'Registration failed',
-          description: 'An unexpected error occurred during registration. Please try again.',
+          description: result.error,
           variant: 'destructive',
         });
       }
+    } catch (error) {
+      console.error('Registration error:', error);
+      toast({
+        title: 'Registration failed',
+        description: 'An unexpected error occurred during registration. Please try again.',
+        variant: 'destructive',
+      });
     } finally {
       setIsLoading(false);
     }
