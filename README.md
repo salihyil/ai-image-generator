@@ -1,5 +1,3 @@
-Certainly! I'll update the README based on the information provided, focusing on the project structure and features without including code snippets. Here's the updated README:
-
 # AI Image Generator
 
 ## Table of Contents
